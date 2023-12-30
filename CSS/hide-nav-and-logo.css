@@ -1,0 +1,15 @@
+    div[id^="s4-titlerow"] {
+        display: none !important;
+    }
+
+    div[id^="sideNavBox"] {
+        display: none !important;
+    }
+
+    div[id^='titleAreaRow'] {
+        display: none !important;
+    }
+
+    div[id^='contentBox'] {
+        margin: 10px !important;
+    }

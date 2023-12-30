@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="StationeryForcast">
+
+<head>
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Dependencies -->
+    <script src="../Style%20Library/JSDependency/axios.min.js"></script>
+    <script src="../Style%20Library/JSDependency/jquery.min.js"></script>
+    <script src="../Style%20Library/JSDependency/angular.min.js"></script>
+    <script src="../Style%20Library/JSDependency/BaseModule.js"></script>
+    <script src="../Style%20Library/JSDependency/bootstrap.bundle.min.js"></script>
+    <script src="../Style%20Library/JSDependency/moment.min.js"></script>
+    <script src="../Style%20Library/JSDependency/xlsx.full.min.js"></script>
+    <!-- Controller -->
+    <script src="../Style%20Library/WebPart/StationeryForcast/StationeryForcast.Controller.js"></script>
+</head>
+
+<body>
+
+	LIVE EIDT TEST FROM LOCAL PC
+
+    <div class="container" ng-controller="ForcastController as vm">
+        <div class="user-info-container">
+            <h2 class="title">Forcast Stationery</h2>
+            <hr>
+
+            <!-- Show loader if data is not loaded yet -->
+            <div ng-show="vm.loading" class="text-center">
+                <div class="spinner-border" role="status">
+                </div>
+            </div>
+
+            <div ng-hide="vm.loading">
+                <table class="table table-striped table-hover">
+                    <thead>
+                        <tr style="font-size: small;">
+                            <th>SN</th>
+                            <th>Item Name</th>
+                            <th>Three Month Ago</th>
+                            <th>Two Month Ago</th>
+                            <th>Previous Month</th>
+                            <th>3 Months Average Usage</th>
+                            <th>Total Usage in 3 Months</th>
+                            <th>Requirement of 2 Months</th>
+                            <th>Stock in Hand</th>
+                            <th>Next Month Requirement</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in vm.StationeryForcastData">
+                            <td>{{$index + 1}}</td>
+                            <td>{{item.ItemName | uppercase}}</td>
+                            <td>{{item.Month1}}</td>
+                            <td>{{item.Month2}}</td>
+                            <td>{{item.Month3}}</td>
+                            <td>{{item.ThreeMonthsAverageUsage}}</td>
+                            <td>{{item.TotalUsageIn3Month}}</td>
+                            <td>{{item.RequirementOf2Month}}</td>
+                            <td>{{item.StockInHand}}</td>
+                            <td>{{item.NextMonthRequirement}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn btn-primary" ng-click="vm.exportToExcel()">
+                    Export to Excel
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
+
+<style>
+    /* To hide the Nav Links */
+    div[id^="s4-titlerow"] {
+        display: none !important;
+    }
+
+    div[id^="sideNavBox"] {
+        display: none !important;
+    }
+
+    div[id^='titleAreaRow'] {
+        display: none !important;
+    }
+
+    div[id^='contentBox'] {
+        margin: 10px !important;
+    }
+
+    /* main style */
+    body {
+        background-color: #f8f9fa;
+    }
+
+    .user-info-container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        margin-top: 20px;
+    }
+
+    .user-info-label {
+        font-weight: bold;
+        color: #007bff;
+    }
+
+    .user-info-data {
+        color: #495057;
+    }
+
+    .title {
+        font-family: 'Bebas Neue', sans-serif;
+        font-size: 30px;
+        color: #007bff;
+    }
+</style>

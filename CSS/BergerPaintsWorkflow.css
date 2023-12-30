@@ -1,0 +1,246 @@
+h1.ms-core-pageTitle,div#quicklinks /*Hiding Page Title & Left Navifgation*/
+{
+	display:none !important;
+}
+div#content_section1 div.row:first-of-type
+{
+	margin-left:0;
+}
+div#content_section1 div.row:first-of-type div.col-sm-3:first-of-type
+{
+	width:0% !important;
+	display: none;
+}
+div#content_section1 div.row:first-of-type div.col-sm-3:first-of-type + div
+{
+	width:100% !important;
+}
+div.social_icon
+{
+	float:right;
+	position:relative;	
+}
+span.form-control-feedback
+{
+	float:right;
+	padding-right:0 !important;
+	position:absolute;
+	top:7px;
+	right:5px;
+}
+div.container.BlockStockRequest
+{
+	background-color:rgb(0,114,188);
+	font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif !important;
+	border:1px navy solid;
+	width:100% !important;
+	font-size:14px !important;
+}
+div.container h2,div.container h3, div.container h4
+{
+	font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif !important;
+	color:White;
+	font-weight:bold;
+}
+div.container h4
+{
+	color:navy;
+	/*margin-left:10px;*/
+	margin-top:0;
+	
+}
+div.panel
+{
+	border:1px navy solid;
+}
+div.row
+{
+	margin-bottom:10px;
+}
+div.table-responsive
+{
+	margin-top:20px;
+	overflow-x:auto;
+	width:1280px;
+}
+table.table tbody:nth-of-type(2) tr
+{
+	border-bottom:1px navy solid;
+}
+table.table tbody:nth-of-type(2) tr:last-of-type
+{
+	border-bottom:1px navy solid !important;
+}
+
+table.table tbody tr th
+{
+	font-weight:200 !important;
+	color:navy;
+	line-height:15px;
+	border:0;
+	font-size:14px !important;
+	vertical-align:top;
+}
+table.table tbody tr td
+{
+	border:0;
+}
+table.table tbody
+{
+	border-top:1px navy solid !important;
+	border-bottom:1px navy solid !important;
+}
+table.table tr th
+{
+	//text-align:center;
+}
+.css-serial 
+{
+	counter-reset: serial-number; /* Set the serial number counter to 0 */
+}
+
+.css-serial td:first-child:before 
+{
+	counter-increment: serial-number; /* Increment the serial number counter */
+	content: counter(serial-number); /* Display the counter */
+}
+div.labelHeader
+{
+	color:navy;
+}
+label
+{
+	font-weight:normal;
+	line-height:14px;
+	font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif !important;
+}
+label.redStar
+{
+	color:red !important;
+	font-size:14px;
+	display:inline;
+}
+select
+{
+	width:100%;
+	font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif !important;
+	cursor:pointer;
+	min-height:26px;
+}
+input[type=text]
+{
+	width:100%;
+	font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif !important;
+}
+input[type=button]
+{
+	font-size:14px;
+	font-family:Calibri,Candara,Segoe,Segoe UI,Optima,Arial,sans-serif !important;
+	border-radius:4px 4px 4px 4px;
+	padding:5px 10px;
+	background-color:navy !important;
+	color:white;	
+	min-width:110px;
+}
+textarea {
+    resize: none;
+}
+textarea:hover {
+    border-color:navy;
+}
+
+div.row.button
+{
+	margin:20px 0 20px 0;
+}
+div#status.info
+{
+	color:rgba(151, 193, 40, 0.77);
+	font-size: 20px;
+	font-weight: bold;
+}
+div#status.error
+{
+	color:red;
+	font-size: 20px;
+	font-weight: bold;
+}
+.search
+{ 
+    padding-left: 5px;
+    border:1px solid #ccc;
+    height: 25px;
+}
+.dem{
+    position: relative;
+    left: 84px;
+    top: 0px;
+}
+.matCode{
+	position: relative;
+	top: -24px;
+	width:85px !important; 
+	height:26px;
+}
+.matName{
+	width: 180px !important;
+}
+.matGroup{
+	width:60px !important;
+}
+.matGroupName{
+	width:130px !important;
+}
+.prodUnit{
+	width:80px !important;
+}
+.factLoc{
+	width:100px !important;
+}
+.movingType{
+	width:105px;
+}
+.cost{
+	font-size: 20px;
+	font-weight: bold;
+}
+.processTime{
+	width:60px !important;
+}
+.rmAddition{
+	width:70px !important;
+}
+.disabled{
+	background-color: #E1DFDF;
+	display: none !important;
+}
+.decision{
+	width:115px !important;
+}
+.disposalMethod{
+	width:85px
+}
+.foundMsgdiv{
+	position: relative;
+	top: -20px;
+	width: 90px;
+	font-size: 12px;
+}
+.template{
+	font-size:16px !important;
+	font-weight:bold;
+}
+.reason{
+	position:relative;
+	left:40px;
+	top:-24px;
+	background-color:#FFFFFF;
+	border-color:navy;
+	border: thick;
+}
+.deviationComment{
+	width:300px !important;
+}
+.settlementRow{
+	background-color:gray;
+}
