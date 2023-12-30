@@ -98,6 +98,12 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
     });
 
     vm.saveAsset = async () => {
+
+        if (vm.SelectedAssetUser === undefined || vm.SelectedAssetUser === '') {
+            alert('Please select an asset user.');
+            return;
+        }
+
         try {
             const data = {
                 __metadata: { type: 'SP.Data.ItAssetMasterListItem' },
