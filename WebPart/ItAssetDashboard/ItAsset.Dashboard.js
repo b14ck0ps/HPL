@@ -15,6 +15,7 @@ const gridOptions = {
         { headerName: "Manufacturer", field: "manufacturer" },
         { headerName: "Product SL No", field: "productSLNo" },
         { headerName: "Warranty Period (To)", field: "warrantyPeriodTo" },
+        { headerName: "Link", field: 'Id', cellRenderer: viewActionCellRenderer, maxWidth: 100 },
     ],
     defaultColDef: {
         sortable: true,
@@ -60,18 +61,19 @@ function viewActionCellRenderer(params) {
 function LinkRenderer(params, label) {
     const viewActionValue = params.value;
 
+    const href = `${ABS_URL}/SitePages/ItAssetForm.aspx?AssetId=${viewActionValue}`;
     return $('<a>', {
-        href: viewActionValue,
+        href: href,
         text: label,
         click: function (event) {
             event.preventDefault();
-            window.open(viewActionValue, '_blank');
+            window.open(href, '_blank');
         }
     })[0]
 }
 
 const FetchData = async () => {
-    const query = `$select=assetNumber,subCategory,acquisitionType,purchaseVendor,model,assetTitle,employeeId,AssetUsers/Title,email,purchaseDate,manufacturer,productSLNo,warrantyPeriodTo&$expand=AssetUsers`;
+    const query = `$select=Id,assetNumber,subCategory,acquisitionType,purchaseVendor,model,assetTitle,employeeId,AssetUsers/Title,email,purchaseDate,manufacturer,productSLNo,warrantyPeriodTo&$expand=AssetUsers`;
 
     try {
         const data = await GetByList('ItAssetMaster', query);
