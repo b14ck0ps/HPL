@@ -47,14 +47,6 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
             { name: 'Rajshahi' }
         ];
 
-        vm.departments = [
-            { name: 'IT Department' },
-            { name: 'Finance Department' },
-            { name: 'Marketing Department' },
-            { name: 'Human Resources' },
-            { name: 'Operations Department' }
-        ];
-
         try {
             const LastAssetRow = await GetByList('ItAssetMaster', '$select=Id&$orderby=Id desc&$top=1');
             LastAssetNumber = LastAssetRow[0].ID;
@@ -76,7 +68,25 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
                     console.error(error);
                 }
             };
+            const fetchDepartment = async () => {
+                try {
+                    const query = `$select=Name,DepartmentTag`;
+                    const data = await GetByList('Department', query);
+                    $scope.$apply(() => {
+                        vm.departments = data.map(item => {
+                            return {
+                                name: item.Name,
+                                tag: item.DepartmentTag
+                            };
+                        });
+                        vm.department = "";
+                    });
+                } catch (error) {
+                    console.error(error);
+                }
+            };
             fetchAssetUser();
+            fetchDepartment();
             $scope.$apply(() => {
                 vm.userInfo = userdata[0];
                 vm.loading = false;
@@ -90,7 +100,8 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
     $scope.$watchGroup(['vm.subCategory', 'vm.purchaseDate', 'vm.department'], function () {
         let _year = vm.purchaseDate?.getFullYear();
         let _categoryPrefix = (vm.subCategory === '' || vm.subCategory === undefined) ? '' : (vm.subCategory.includes('Laptop') ? 'LAP' : 'DES');
-        let _departmentPrefix = (vm.department || '').split(' ').map(word => word.charAt(0)).join('');
+        /* let _departmentPrefix = (vm.department || '').split(' ').map(word => word.charAt(0)).join(''); */
+        let _departmentPrefix = vm.department ?? '';
         const _assetNumber = LastAssetNumber === undefined ? '' : String(LastAssetNumber + 1).padStart(3, '0');
 
         const tagParts = ['HPL', 'IE', _categoryPrefix, _year, _departmentPrefix, _assetNumber].filter(Boolean);
@@ -207,7 +218,7 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
         vm.workOrderNumber = getRandomString(8);
         vm.assetLocation = getRandomArrayElement(vm.assetLocations).name;
         vm.assetOwner = getRandomString(10);
-        vm.department = getRandomArrayElement(vm.departments).name;
+        vm.department = getRandomArrayElement(vm.departments).tag;
         vm.assetCustodian = getRandomString(10);
 
         console.log('Random data generated for testing:', vm);
