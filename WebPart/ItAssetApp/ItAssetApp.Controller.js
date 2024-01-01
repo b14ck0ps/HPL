@@ -1,14 +1,15 @@
 /// <reference path="../../JSDependency/BaseModule.js" />
 
 const ItAssetApp = angular.module('ItAssetApp', [])
+const AssetId = new URLSearchParams(window.location.search).get('AssetId');
 let LastAssetNumber;
 
-ItAssetApp.controller('AssetFormController', function ($scope) {
+ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
     const vm = this;
     vm.loading = true;
     vm.showUpdateButton = false;
 
-    const fetchUserData = async () => {
+    const fetchData = async () => {
         vm.subCategories = [
             { name: 'Laptops' },
             { name: 'Desktops' }
@@ -46,6 +47,17 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
             { name: 'Sylhet' },
             { name: 'Rajshahi' }
         ];
+
+        $scope.$watchGroup(['vm.subCategory', 'vm.purchaseDate', 'vm.department'], function () {
+            let _year = vm.purchaseDate?.getFullYear();
+            let _categoryPrefix = (vm.subCategory === '' || vm.subCategory === undefined) ? '' : (vm.subCategory.includes('Laptop') ? 'LAP' : 'DES');
+            /* let _departmentPrefix = (vm.department || '').split(' ').map(word => word.charAt(0)).join(''); */
+            let _departmentPrefix = vm.department ?? '';
+            const _assetNumber = LastAssetNumber === undefined ? '' : String(LastAssetNumber + 1).padStart(3, '0');
+
+            const tagParts = ['HPL', 'IE', _categoryPrefix, _year, _departmentPrefix, _assetNumber].filter(Boolean);
+            vm.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
+        });
 
         try {
             const LastAssetRow = await GetByList('ItAssetMaster', '$select=Id&$orderby=Id desc&$top=1');
@@ -85,8 +97,14 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
                     console.error(error);
                 }
             };
-            fetchAssetUser();
-            fetchDepartment();
+            await fetchAssetUser();
+            await fetchDepartment();
+
+            if (AssetId) {
+                fetchAssetData(AssetId);
+                vm.showUpdateButton = true;
+            }
+
             $scope.$apply(() => {
                 vm.userInfo = userdata[0];
                 vm.loading = false;
@@ -96,17 +114,7 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
         }
     };
 
-    fetchUserData();
-    $scope.$watchGroup(['vm.subCategory', 'vm.purchaseDate', 'vm.department'], function () {
-        let _year = vm.purchaseDate?.getFullYear();
-        let _categoryPrefix = (vm.subCategory === '' || vm.subCategory === undefined) ? '' : (vm.subCategory.includes('Laptop') ? 'LAP' : 'DES');
-        /* let _departmentPrefix = (vm.department || '').split(' ').map(word => word.charAt(0)).join(''); */
-        let _departmentPrefix = vm.department ?? '';
-        const _assetNumber = LastAssetNumber === undefined ? '' : String(LastAssetNumber + 1).padStart(3, '0');
-
-        const tagParts = ['HPL', 'IE', _categoryPrefix, _year, _departmentPrefix, _assetNumber].filter(Boolean);
-        vm.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
-    });
+    fetchData();
 
     vm.saveAsset = async () => {
 
@@ -224,5 +232,54 @@ ItAssetApp.controller('AssetFormController', function ($scope) {
         console.log('Random data generated for testing:', vm);
     };
 
+
+    // If Has Id Then Need to Get the data from List and auto populate the form
+    const fetchAssetData = async (id) => {
+        try {
+            const query = `$select=*&$filter=ID eq ${id}`;
+            const response = await GetByList('ItAssetMaster', query, id);
+            const data = response[0];
+            $scope.$apply(() => {
+                vm.assetNumber = data.assetNumber;
+                vm.subCategory = data.subCategory;
+                vm.acquisitionType = data.acquisitionType;
+                vm.purchaseVendor = data.purchaseVendor;
+                vm.category = data.category;
+                vm.brand = data.brand;
+                vm.model = data.model;
+                vm.number = data.number;
+                vm.assetTitle = data.assetTitle;
+                vm.purchaseDate = new Date(data.purchaseDate);
+                vm.manufacturer = data.manufacturer;
+                vm.purchasePrice = data.purchasePrice;
+                vm.tag = data.tag;
+                vm.name = data.name;
+                vm.version = data.version;
+                vm.securityPatch = data.securityPatch;
+                vm.usefulLife = data.usefulLife;
+                vm.currentUserRequisitionDate = new Date(data.currentUserRequisitionDate);
+                vm.warrantyPeriodFrom = new Date(data.warrantyPeriodFrom);
+                vm.productSLNo = data.productSLNo;
+                vm.warrantyPeriodTo = new Date(data.warrantyPeriodTo);
+                vm.position = data.position;
+                vm.email = data.email;
+                vm.employeeId = data.employeeId;
+                vm.operation = data.operation;
+                vm.workOrderNumber = data.workOrderNumber;
+                vm.assetLocation = data.assetLocation;
+                vm.assetOwner = data.assetOwner;
+                vm.department = data.department;
+                vm.assetCustodian = data.assetCustodian;
+                vm.showUpdateButton = true;
+                $timeout(function () {
+                    $("#AssetUserName").val(data.AssetUsersId).trigger("change");
+                });
+                vm.loading = false;
+            });
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
 
 });
