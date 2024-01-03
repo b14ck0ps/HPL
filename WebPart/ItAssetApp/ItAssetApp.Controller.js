@@ -17,11 +17,13 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             let _categoryPrefix = (vm.formData.subCategory === '' || vm.formData.subCategory === undefined) ? '' : (vm.formData.subCategory.includes('Laptop') ? 'LAP' : 'DES');
             /* let _departmentPrefix = (vm.formData.department || '').split(' ').map(word => word.charAt(0)).join(''); */
             let _departmentPrefix = vm.formData.department ?? '';
-            const _assetNumber = LastAssetNumber === undefined ? '' : String(LastAssetNumber + 1).padStart(3, '0');
+            if (!AssetId)
+                _assetNumber = LastAssetNumber === undefined ? '' : String(LastAssetNumber + 1).padStart(3, '0');
+            else
+                _assetNumber = AssetId.padStart(3, '0');
 
             const tagParts = ['HPL', 'IE', _categoryPrefix, _year, _departmentPrefix, _assetNumber].filter(Boolean);
-            if (!AssetId)
-                vm.formData.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
+            vm.formData.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
         });
 
         try {
@@ -156,7 +158,7 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
         vm.loading = true;
         $('#SuccessModal').modal('show');
         try {
-            await UpdateListItem('ItAssetMaster', AssetId, { __metadata: { type: 'SP.Data.ItAssetMasterListItem' }, ...filteredFormData });
+            await UpdateListItem('ItAssetMaster', AssetId, { __metadata: { type: 'SP.Data.ItAssetMasterListItem' }, AssetUsersId: vm.formData.SelectedAssetUser, ...filteredFormData });
             vm.loading = false;
             $scope.$apply(() => {
                 vm.showMCloseBtn = false;
