@@ -8,7 +8,7 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
     const vm = this;
     vm.loading = true;
     vm.showUpdateButton = false;
-
+    vm.formData = {};
     const fetchData = async () => {
         vm.subCategories = [
             { name: 'Laptops' },
@@ -50,15 +50,15 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             { name: 'Rajshahi' }
         ];
 
-        $scope.$watchGroup(['vm.subCategory', 'vm.purchaseDate', 'vm.department'], function () {
-            let _year = vm.purchaseDate?.getFullYear();
-            let _categoryPrefix = (vm.subCategory === '' || vm.subCategory === undefined) ? '' : (vm.subCategory.includes('Laptop') ? 'LAP' : 'DES');
-            /* let _departmentPrefix = (vm.department || '').split(' ').map(word => word.charAt(0)).join(''); */
-            let _departmentPrefix = vm.department ?? '';
+        $scope.$watchGroup(['vm.formData.subCategory', 'vm.formData.purchaseDate', 'vm.formData.department'], function () {
+            let _year = vm.formData.purchaseDate?.getFullYear();
+            let _categoryPrefix = (vm.formData.subCategory === '' || vm.formData.subCategory === undefined) ? '' : (vm.formData.subCategory.includes('Laptop') ? 'LAP' : 'DES');
+            /* let _departmentPrefix = (vm.formData.department || '').split(' ').map(word => word.charAt(0)).join(''); */
+            let _departmentPrefix = vm.formData.department ?? '';
             const _assetNumber = LastAssetNumber === undefined ? '' : String(LastAssetNumber + 1).padStart(3, '0');
 
             const tagParts = ['HPL', 'IE', _categoryPrefix, _year, _departmentPrefix, _assetNumber].filter(Boolean);
-            vm.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
+            vm.formData.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
         });
 
         try {
@@ -120,7 +120,7 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
 
     vm.saveAsset = async () => {
 
-        if (vm.SelectedAssetUser === undefined || vm.SelectedAssetUser === '') {
+        if (vm.formData.SelectedAssetUser === undefined || vm.formData.SelectedAssetUser === '') {
             alert('Please select an asset user.');
             return;
         }
@@ -129,47 +129,20 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             const data = {
                 __metadata: { type: 'SP.Data.ItAssetMasterListItem' },
                 Title: 'IT Asset',
-                assetNumber: vm.assetNumber,
-                subCategory: vm.subCategory,
-                acquisitionType: vm.acquisitionType,
-                purchaseVendor: vm.purchaseVendor,
-                category: vm.category,
-                brand: vm.brand,
-                model: vm.model,
-                number: vm.number,
-                assetTitle: vm.assetTitle,
-                purchaseDate: vm.purchaseDate,
-                manufacturer: vm.manufacturer,
-                purchasePrice: vm.purchasePrice,
-                tag: vm.tag,
-                name: vm.name,
-                version: vm.version,
-                securityPatch: vm.securityPatch,
-                usefulLife: vm.usefulLife,
-                currentUserRequisitionDate: vm.currentUserRequisitionDate,
-                warrantyPeriodFrom: vm.warrantyPeriodFrom,
-                productSLNo: vm.productSLNo,
-                warrantyPeriodTo: vm.warrantyPeriodTo,
-                AssetUsersId: vm.SelectedAssetUser,
-                position: vm.position,
-                email: vm.email,
-                employeeId: vm.employeeId,
-                operation: vm.operation,
-                workOrderNumber: vm.workOrderNumber,
-                assetLocation: vm.assetLocation,
-                assetOwner: vm.assetOwner,
-                department: vm.department,
-                assetCustodian: vm.assetCustodian
+                ...vm.formData,
+                AssetUsersId: vm.formData.SelectedAssetUser
             };
+
+            const { SelectedAssetUser, ...filteredData } = data;
             vm.loading = true;
             $('#SuccessModal').modal('show');
-            const result = await AddListItem('ItAssetMaster', data);
+            const result = await AddListItem('ItAssetMaster', filteredData);
 
             if (result) {
                 $scope.$apply(() => {
                     vm.loading = false;
                     vm.showMCloseBtn = false;
-                    vm.ModalMessage = `Your request has been submitted successfully. Tag #${vm.tag}`;
+                    vm.ModalMessage = `Your request has been submitted successfully. Tag #${vm.formData.tag}`;
                 });
             }
         } catch (error) {
@@ -181,6 +154,62 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             });
         }
     };
+
+    const fetchAssetData = async (id) => {
+        try {
+            const query = `$select=*&$filter=ID eq ${id}`;
+            const response = await GetByList('ItAssetMaster', query, id);
+            const data = response[0];
+
+            $scope.$apply(() => {
+                vm.formData = {
+                    ...data,
+                    purchaseDate: new Date(data.purchaseDate),
+                    currentUserRequisitionDate: new Date(data.currentUserRequisitionDate),
+                    warrantyPeriodFrom: new Date(data.warrantyPeriodFrom),
+                    warrantyPeriodTo: new Date(data.warrantyPeriodTo)
+                }
+                vm.showUpdateButton = true;
+                $timeout(function () {
+                    $("#AssetUserName").val(data.AssetUsersId).trigger("change");
+                });
+                vm.loading = false;
+            });
+
+        } catch (error) {
+            console.error(error);
+        }
+    };
+
+    vm.updateAsset = async () => {
+        const selectedProperties = ['assetNumber', 'subCategory', 'acquisitionType', 'purchaseVendor', 'category', 'brand', 'model', 'number', 'assetTitle', 'purchaseDate', 'manufacturer', 'purchasePrice', 'tag', 'name', 'version', 'securityPatch', 'usefulLife', 'currentUserRequisitionDate', 'warrantyPeriodFrom', 'productSLNo', 'warrantyPeriodTo', 'position', 'email', 'employeeId', 'operation', 'workOrderNumber', 'assetLocation', 'assetOwner', 'department', 'assetCustodian'];
+        const filteredFormData = {};
+        selectedProperties.forEach(property => {
+            if (vm.formData[property] !== undefined) {
+                filteredFormData[property] = vm.formData[property];
+            }
+        });
+
+        vm.loading = true;
+        $('#SuccessModal').modal('show');
+        try {
+            await UpdateListItem('ItAssetMaster', AssetId, { __metadata: { type: 'SP.Data.ItAssetMasterListItem' }, ...filteredFormData });
+            vm.loading = false;
+            $scope.$apply(() => {
+                vm.showMCloseBtn = false;
+                vm.ModalMessage = `Asset ${vm.formData.tag} has been Updated successfully.`;
+                vm.loading = false;
+            });
+
+        } catch (error) {
+            $scope.$apply(() => {
+                vm.showMCloseBtn = true;
+                vm.ModalMessage = `An error occurred while updating. Please try again later.`;
+                vm.loading = false;
+            });
+        }
+    }
+    vm.RedirectToDashboard = () => window.location.href = `${ABS_URL}/SitePages/ItAssetDashboard.aspx`;
 
     vm.testMe = () => {
         const getRandomString = (length) => {
@@ -200,141 +229,37 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             return array[Math.floor(Math.random() * array.length)];
         };
 
-        vm.assetNumber = getRandomString(8);
-        vm.subCategory = getRandomArrayElement(vm.subCategories).name;
-        vm.acquisitionType = getRandomArrayElement(vm.acquisitionTypes).name;
-        vm.purchaseVendor = getRandomString(15);
-        vm.category = getRandomArrayElement(vm.categories).name;
-        vm.brand = getRandomArrayElement(vm.brands).name;
-        vm.model = getRandomString(10);
-        vm.number = getRandomString(8);
-        vm.assetTitle = getRandomString(15);
-        vm.purchaseDate = getRandomDate(new Date(2022, 0, 1), new Date());
-        vm.manufacturer = getRandomString(10);
-        vm.purchasePrice = Math.floor(Math.random() * 1000) + 1;
-        vm.tag = getRandomString(8);
-        vm.name = getRandomString(10);
-        vm.version = getRandomString(5);
-        vm.securityPatch = getRandomString(5);
-        vm.usefulLife = Math.floor(Math.random() * 10) + 1;
-        vm.currentUserRequisitionDate = getRandomDate(new Date(2022, 0, 1), new Date());
-        vm.warrantyPeriodFrom = getRandomDate(new Date(2022, 0, 1), new Date());
-        vm.productSLNo = getRandomString(8);
-        vm.warrantyPeriodTo = getRandomDate(new Date(2023, 0, 1), new Date());
-        vm.position = getRandomString(10);
-        vm.email = getRandomString(10) + "@example.com";
-        vm.employeeId = getRandomString(8);
-        vm.operation = getRandomArrayElement(vm.operations).name;
-        vm.workOrderNumber = getRandomString(8);
-        vm.assetLocation = getRandomArrayElement(vm.assetLocations).name;
-        vm.assetOwner = getRandomString(10);
-        vm.department = getRandomArrayElement(vm.departments).tag;
-        vm.assetCustodian = getRandomString(10);
+        vm.formData.assetNumber = getRandomString(8);
+        vm.formData.subCategory = getRandomArrayElement(vm.subCategories).name;
+        vm.formData.acquisitionType = getRandomArrayElement(vm.acquisitionTypes).name;
+        vm.formData.purchaseVendor = getRandomString(15);
+        vm.formData.category = getRandomArrayElement(vm.categories).name;
+        vm.formData.brand = getRandomArrayElement(vm.brands).name;
+        vm.formData.model = getRandomString(10);
+        vm.formData.number = getRandomString(8);
+        vm.formData.assetTitle = getRandomString(15);
+        vm.formData.purchaseDate = getRandomDate(new Date(2022, 0, 1), new Date());
+        vm.formData.manufacturer = getRandomString(10);
+        vm.formData.purchasePrice = Math.floor(Math.random() * 1000) + 1;
+        vm.formData.tag = getRandomString(8);
+        vm.formData.name = getRandomString(10);
+        vm.formData.version = getRandomString(5);
+        vm.formData.securityPatch = getRandomString(5);
+        vm.formData.usefulLife = Math.floor(Math.random() * 10) + 1;
+        vm.formData.currentUserRequisitionDate = getRandomDate(new Date(2022, 0, 1), new Date());
+        vm.formData.warrantyPeriodFrom = getRandomDate(new Date(2022, 0, 1), new Date());
+        vm.formData.productSLNo = getRandomString(8);
+        vm.formData.warrantyPeriodTo = getRandomDate(new Date(2023, 0, 1), new Date());
+        vm.formData.position = getRandomString(10);
+        vm.formData.email = getRandomString(10) + "@example.com";
+        vm.formData.employeeId = getRandomString(8);
+        vm.formData.operation = getRandomArrayElement(vm.operations).name;
+        vm.formData.workOrderNumber = getRandomString(8);
+        vm.formData.assetLocation = getRandomArrayElement(vm.assetLocations).name;
+        vm.formData.assetOwner = getRandomString(10);
+        vm.formData.department = getRandomArrayElement(vm.departments).tag;
+        vm.formData.assetCustodian = getRandomString(10);
 
-        console.log('Random data generated for testing:', vm);
+        console.log('Random data generated for testing:', vm.formData);
     };
-
-
-    // If Has Id Then Need to Get the data from List and auto populate the form
-    const fetchAssetData = async (id) => {
-        try {
-            const query = `$select=*&$filter=ID eq ${id}`;
-            const response = await GetByList('ItAssetMaster', query, id);
-            const data = response[0];
-            $scope.$apply(() => {
-                vm.assetNumber = data.assetNumber;
-                vm.subCategory = data.subCategory;
-                vm.acquisitionType = data.acquisitionType;
-                vm.purchaseVendor = data.purchaseVendor;
-                vm.category = data.category;
-                vm.brand = data.brand;
-                vm.model = data.model;
-                vm.number = data.number;
-                vm.assetTitle = data.assetTitle;
-                vm.purchaseDate = new Date(data.purchaseDate);
-                vm.manufacturer = data.manufacturer;
-                vm.purchasePrice = data.purchasePrice;
-                vm.tag = data.tag;
-                vm.name = data.name;
-                vm.version = data.version;
-                vm.securityPatch = data.securityPatch;
-                vm.usefulLife = data.usefulLife;
-                vm.currentUserRequisitionDate = new Date(data.currentUserRequisitionDate);
-                vm.warrantyPeriodFrom = new Date(data.warrantyPeriodFrom);
-                vm.productSLNo = data.productSLNo;
-                vm.warrantyPeriodTo = new Date(data.warrantyPeriodTo);
-                vm.position = data.position;
-                vm.email = data.email;
-                vm.employeeId = data.employeeId;
-                vm.operation = data.operation;
-                vm.workOrderNumber = data.workOrderNumber;
-                vm.assetLocation = data.assetLocation;
-                vm.assetOwner = data.assetOwner;
-                vm.department = data.department;
-                vm.assetCustodian = data.assetCustodian;
-                vm.showUpdateButton = true;
-                $timeout(function () {
-                    $("#AssetUserName").val(data.AssetUsersId).trigger("change");
-                });
-                vm.loading = false;
-            });
-
-        } catch (error) {
-            console.error(error);
-        }
-    };
-
-    vm.updateAsset = async () => {
-        const data = {
-            __metadata: { type: 'SP.Data.ItAssetMasterListItem' },
-            assetNumber: vm.assetNumber,
-            subCategory: vm.subCategory,
-            acquisitionType: vm.acquisitionType,
-            purchaseVendor: vm.purchaseVendor,
-            category: vm.category,
-            brand: vm.brand,
-            model: vm.model,
-            number: vm.number,
-            assetTitle: vm.assetTitle,
-            purchaseDate: vm.purchaseDate,
-            manufacturer: vm.manufacturer,
-            purchasePrice: vm.purchasePrice,
-            tag: vm.tag,
-            name: vm.name,
-            version: vm.version,
-            securityPatch: vm.securityPatch,
-            usefulLife: vm.usefulLife,
-            currentUserRequisitionDate: vm.currentUserRequisitionDate,
-            warrantyPeriodFrom: vm.warrantyPeriodFrom,
-            productSLNo: vm.productSLNo,
-            warrantyPeriodTo: vm.warrantyPeriodTo,
-            AssetUsersId: vm.SelectedAssetUser,
-            position: vm.position,
-            email: vm.email,
-            employeeId: vm.employeeId,
-            operation: vm.operation,
-            workOrderNumber: vm.workOrderNumber,
-            assetLocation: vm.assetLocation,
-            assetOwner: vm.assetOwner,
-            department: vm.department,
-            assetCustodian: vm.assetCustodian
-        };
-        vm.loading = true;
-        $('#SuccessModal').modal('show');
-        try {
-            await UpdateListItem('ItAssetMaster', AssetId, data);
-            vm.loading = false;
-            $scope.$apply(() => {
-                vm.showMCloseBtn = false;
-                vm.ModalMessage = `Asset ${vm.tag} has been Updated successfully.`;
-            });
-
-        } catch (error) {
-            $scope.$apply(() => {
-                vm.showMCloseBtn = true;
-                vm.ModalMessage = `An error occurred while updating. Please try again later.`;
-            });
-        }
-    }
-    vm.RedirectToDashboard = () => window.location.href = `${ABS_URL}/SitePages/ItAssetDashboard.aspx`;
 });

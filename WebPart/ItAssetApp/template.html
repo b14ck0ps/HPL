@@ -26,15 +26,16 @@
 <body>
     <div class="container" ng-controller="AssetFormController as vm">
         <!-- Show loader if data is not loaded yet -->
-        <div ng-show="loading" class="text-center">
+        <div ng-show="vm.loading" class="text-center">
             <div class="spinner-border" role="status">
             </div>
         </div>
-        <main ng-hide="loading">
+        <main ng-hide="vm.loading">
             <div class="user-info-container">
                 <div class="d-flex justify-content-between align-items-center flex-column">
                     <h2 class="title">IT Asset Form</h2>
-                    <h5 class="font-monospace alert alert-light fs-5" style="padding: 0; margin: 0;">TAG# {{vm.tag}}</h5>
+                    <h5 class="font-monospace alert alert-light fs-5" style="padding: 0; margin: 0;">TAG#
+                        {{vm.formData.tag}}</h5>
                 </div>
                 <hr>
 
@@ -42,19 +43,20 @@
                 <section class="row">
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Number:</label>
-                        <input type="text" class="form-control" ng-model="vm.assetNumber">
+                        <input type="text" class="form-control" ng-model="vm.formData.assetNumber">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Sub Category:</label>
-                        <select class="form-select" ng-model="vm.subCategory">
+                        <select class="form-select" ng-model="vm.formData.subCategory">
                             <option value="">--Select Sub Category--</option>
-                            <option ng-repeat="subCategory in vm.subCategories" value="{{ subCategory.name }}">{{
+                            <option ng-repeat="subCategory in vm.subCategories" value="{{ subCategory.name }}">
+                                {{
                                 subCategory.name }}</option>
                         </select>
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Acquisition Type:</label>
-                        <select class="form-select" ng-model="vm.acquisitionType">
+                        <select class="form-select" ng-model="vm.formData.acquisitionType">
                             <option value="">--Select Acquisition--</option>
                             <option ng-repeat="acquisitionType in vm.acquisitionTypes"
                                 value="{{ acquisitionType.name }}">{{ acquisitionType.name }}</option>
@@ -62,52 +64,54 @@
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Purchase Vendor:</label>
-                        <input type="text" class="form-control" ng-model="vm.purchaseVendor">
+                        <input type="text" class="form-control" ng-model="vm.formData.purchaseVendor">
                     </div>
                 </section>
 
                 <section class="row">
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Category:</label>
-                        <select class="form-select" ng-model="vm.category">
+                        <select class="form-select" ng-model="vm.formData.category">
                             <option value="">--Select Category--</option>
-                            <option ng-repeat="category in vm.categories" value="{{ category.name }}">{{ category.name
+                            <option ng-repeat="category in vm.categories" value="{{ category.name }}">{{
+                                category.name
                                 }}</option>
                         </select>
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Brand:</label>
-                        <select class="form-select" ng-model="vm.brand">
+                        <select class="form-select" ng-model="vm.formData.brand">
                             <option value="">--Select Brand--</option>
-                            <option ng-repeat="brand in vm.brands" value="{{ brand.name }}">{{ brand.name }}</option>
+                            <option ng-repeat="brand in vm.brands" value="{{ brand.name }}">{{ brand.name }}
+                            </option>
                         </select>
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Model:</label>
-                        <input type="text" class="form-control" ng-model="vm.model">
+                        <input type="text" class="form-control" ng-model="vm.formData.model">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Number:</label>
-                        <input type="text" class="form-control" ng-model="vm.number">
+                        <input type="text" class="form-control" ng-model="vm.formData.number">
                     </div>
                 </section>
 
                 <section class="row">
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Title:</label>
-                        <input type="text" class="form-control" ng-model="vm.assetTitle">
+                        <input type="text" class="form-control" ng-model="vm.formData.assetTitle">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Purchase Date:</label>
-                        <input type="date" class="form-control" ng-model="vm.purchaseDate">
+                        <input type="date" class="form-control" ng-model="vm.formData.purchaseDate">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Manufacturer:</label>
-                        <input type="text" class="form-control" ng-model="vm.manufacturer">
+                        <input type="text" class="form-control" ng-model="vm.formData.manufacturer">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Purchase Price:</label>
-                        <input type="number" class="form-control" ng-model="vm.purchasePrice">
+                        <input type="number" class="form-control" ng-model="vm.formData.purchasePrice">
                     </div>
                 </section>
 
@@ -117,25 +121,25 @@
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">OS Name:</label>
-                            <input type="text" class="form-control" ng-model="vm.name">
+                            <input type="text" class="form-control" ng-model="vm.formData.name">
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">OS Version:</label>
-                            <input type="text" class="form-control" ng-model="vm.version">
+                            <input type="text" class="form-control" ng-model="vm.formData.version">
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">Security Patch:</label>
-                            <input type="text" class="form-control" ng-model="vm.securityPatch">
+                            <input type="text" class="form-control" ng-model="vm.formData.securityPatch">
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">Useful Life:</label>
-                            <input type="number" class="form-control" ng-model="vm.usefulLife">
+                            <input type="number" class="form-control" ng-model="vm.formData.usefulLife">
                         </div>
                     </div>
                 </section>
@@ -144,25 +148,25 @@
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">Current User Requisition Date:</label>
-                            <input type="date" class="form-control" ng-model="vm.currentUserRequisitionDate">
+                            <input type="date" class="form-control" ng-model="vm.formData.currentUserRequisitionDate">
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">Warranty Period(From):</label>
-                            <input type="date" class="form-control" ng-model="vm.warrantyPeriodFrom">
+                            <input type="date" class="form-control" ng-model="vm.formData.warrantyPeriodFrom">
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">Product SL No:</label>
-                            <input type="text" class="form-control" ng-model="vm.productSLNo">
+                            <input type="text" class="form-control" ng-model="vm.formData.productSLNo">
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="d-flex flex-column mb-3">
                             <label class="info-label">Warranty Period(To):</label>
-                            <input type="date" class="form-control" ng-model="vm.warrantyPeriodTo">
+                            <input type="date" class="form-control" ng-model="vm.formData.warrantyPeriodTo">
                         </div>
                     </div>
                 </section>
@@ -173,29 +177,30 @@
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">User Name:</label>
                         <select class="form-select" style="width: 300px; padding: 0.375rem 0.75rem;" id="AssetUserName"
-                            ng-model="vm.SelectedAssetUser" ng-change="vm.AssetUserNameClicked()">
+                            ng-model="vm.formData.SelectedAssetUser" ng-change="vm.AssetUserNameClicked()">
                             <option value=""></option>
-                            <option ng-repeat="user in vm.AssetUsers" value="{{user.email}}">{{user.name}}</option>
+                            <option ng-repeat="user in vm.AssetUsers" value="{{user.email}}">{{user.name}}
+                            </option>
                         </select>
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">User Position:</label>
-                        <input type="text" class="form-control" ng-model="vm.position">
+                        <input type="text" class="form-control" ng-model="vm.formData.position">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">User Email:</label>
-                        <input type="text" class="form-control" ng-model="vm.email">
+                        <input type="text" class="form-control" ng-model="vm.formData.email">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Employee ID:</label>
-                        <input type="text" class="form-control" ng-model="vm.employeeId">
+                        <input type="text" class="form-control" ng-model="vm.formData.employeeId">
                     </div>
                 </section>
 
                 <section class="row">
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Operation:</label>
-                        <select class="form-select" ng-model="vm.operation">
+                        <select class="form-select" ng-model="vm.formData.operation">
                             <option value="">--Select Operation--</option>
                             <option ng-repeat="operation in vm.operations" value="{{ operation.name }}">{{
                                 operation.name }}</option>
@@ -203,11 +208,11 @@
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Work Order Number:</label>
-                        <input type="text" class="form-control" ng-model="vm.workOrderNumber">
+                        <input type="text" class="form-control" ng-model="vm.formData.workOrderNumber">
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Location:</label>
-                        <select class="form-select" ng-model="vm.assetLocation">
+                        <select class="form-select" ng-model="vm.formData.assetLocation">
                             <option value="">--Select Asset Location--</option>
                             <option ng-repeat="assetLocation in vm.assetLocations" value="{{ assetLocation.name }}">{{
                                 assetLocation.name }}</option>
@@ -215,14 +220,14 @@
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Owner:</label>
-                        <input type="text" class="form-control" ng-model="vm.assetOwner">
+                        <input type="text" class="form-control" ng-model="vm.formData.assetOwner">
                     </div>
                 </section>
 
                 <section class="row">
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Department:</label>
-                        <select class="form-select" ng-model="vm.department">
+                        <select class="form-select" ng-model="vm.formData.department">
                             <option value="">--Select Department--</option>
                             <option ng-repeat="department in vm.departments" value="{{ department.tag }}">{{
                                 department.name }}</option>
@@ -230,7 +235,7 @@
                     </div>
                     <div class="col-3 mb-3 d-flex flex-column">
                         <label class="info-label">Asset Custodian:</label>
-                        <input type="text" class="form-control" ng-model="vm.assetCustodian">
+                        <input type="text" class="form-control" ng-model="vm.formData.assetCustodian">
                     </div>
                 </section>
             </div>
