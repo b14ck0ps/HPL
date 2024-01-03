@@ -20,7 +20,8 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             const _assetNumber = LastAssetNumber === undefined ? '' : String(LastAssetNumber + 1).padStart(3, '0');
 
             const tagParts = ['HPL', 'IE', _categoryPrefix, _year, _departmentPrefix, _assetNumber].filter(Boolean);
-            vm.formData.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
+            if (!AssetId)
+                vm.formData.tag = tagParts.slice(0, 5).join('-') + tagParts.slice(5).join('');
         });
 
         try {
