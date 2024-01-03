@@ -127,17 +127,9 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             const data = response[0];
 
             $scope.$apply(() => {
-                vm.formData = {
-                    ...data,
-                    purchaseDate: new Date(data.purchaseDate),
-                    currentUserRequisitionDate: new Date(data.currentUserRequisitionDate),
-                    warrantyPeriodFrom: new Date(data.warrantyPeriodFrom),
-                    warrantyPeriodTo: new Date(data.warrantyPeriodTo)
-                }
+                vm.formData = { ...data, purchaseDate: new Date(data.purchaseDate), currentUserRequisitionDate: new Date(data.currentUserRequisitionDate), warrantyPeriodFrom: new Date(data.warrantyPeriodFrom), warrantyPeriodTo: new Date(data.warrantyPeriodTo) };
                 vm.showUpdateButton = true;
-                $timeout(function () {
-                    $("#AssetUserName").val(data.AssetUsersId).trigger("change");
-                });
+                $timeout(() => $("#AssetUserName").val(data.AssetUsersId).trigger("change"));
                 vm.loading = false;
             });
 
