@@ -21,6 +21,8 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
             { name: 'General' },
             { name: 'Sold' },
             { name: 'Damage' },
+            { name: 'Support Store' },
+            { name: 'Lost' },
             { name: 'Disposed' }
         ];
 
