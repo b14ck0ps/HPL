@@ -284,4 +284,57 @@ ItAssetApp.controller('AssetFormController', function ($scope, $timeout) {
         }
     };
 
+    vm.updateAsset = async () => {
+        const data = {
+            __metadata: { type: 'SP.Data.ItAssetMasterListItem' },
+            assetNumber: vm.assetNumber,
+            subCategory: vm.subCategory,
+            acquisitionType: vm.acquisitionType,
+            purchaseVendor: vm.purchaseVendor,
+            category: vm.category,
+            brand: vm.brand,
+            model: vm.model,
+            number: vm.number,
+            assetTitle: vm.assetTitle,
+            purchaseDate: vm.purchaseDate,
+            manufacturer: vm.manufacturer,
+            purchasePrice: vm.purchasePrice,
+            tag: vm.tag,
+            name: vm.name,
+            version: vm.version,
+            securityPatch: vm.securityPatch,
+            usefulLife: vm.usefulLife,
+            currentUserRequisitionDate: vm.currentUserRequisitionDate,
+            warrantyPeriodFrom: vm.warrantyPeriodFrom,
+            productSLNo: vm.productSLNo,
+            warrantyPeriodTo: vm.warrantyPeriodTo,
+            AssetUsersId: vm.SelectedAssetUser,
+            position: vm.position,
+            email: vm.email,
+            employeeId: vm.employeeId,
+            operation: vm.operation,
+            workOrderNumber: vm.workOrderNumber,
+            assetLocation: vm.assetLocation,
+            assetOwner: vm.assetOwner,
+            department: vm.department,
+            assetCustodian: vm.assetCustodian
+        };
+        vm.loading = true;
+        $('#SuccessModal').modal('show');
+        try {
+            await UpdateListItem('ItAssetMaster', AssetId, data);
+            vm.loading = false;
+            $scope.$apply(() => {
+                vm.showMCloseBtn = false;
+                vm.ModalMessage = `Asset ${vm.tag} has been Updated successfully.`;
+            });
+
+        } catch (error) {
+            $scope.$apply(() => {
+                vm.showMCloseBtn = true;
+                vm.ModalMessage = `An error occurred while updating. Please try again later.`;
+            });
+        }
+    }
+    vm.RedirectToDashboard = () => window.location.href = `${ABS_URL}/SitePages/ItAssetDashboard.aspx`;
 });
